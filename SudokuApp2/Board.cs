@@ -6,22 +6,153 @@ namespace SudokuApp2
 {
     class Board
     {
-        public Quadrant[,] quadrants = new Quadrant[3,3];
+        public const int sizeX = 9;
+        public const int sizeY = 9;
+        public const int sizeByQuadIndex = 9;
+        public Cell[,] cells = new Cell[sizeX, sizeY];
+        public Row[] rows = new Row[sizeY];
+        public Col[] cols = new Col[sizeX];
+        public Quadrant[] quadrants = new Quadrant[sizeByQuadIndex];
         public Board()
         {
+            cells = FillCells();
+            cols = FillCols();
+            rows = FillRows();
             quadrants = FillQuadrants();
         }
-        private Quadrant[,] FillQuadrants()
+
+        private Cell[,] FillCells()
         {
-            Quadrant[,] newBoard = new Quadrant[3,3];
-            for (int i = 0; i < 3; i++)
+            Cell[,] boardInCells = new Cell[Board.sizeX, Board.sizeY];
+            for (int i = 0; i < Board.sizeX; i++)
             {
-                for (int j = 0; j < 3; j++)
+                for (int j = 0; j < Board.sizeY; j++)
                 {
-                    newBoard[i, j] = new Quadrant(i, j);
+                    boardInCells[i, j] = new Cell(i, j);
                 }
             }
+            return boardInCells;
+        }
+
+        public void RemoveCandidates(int candidate, int xCoord, int yCoord)//schöner mit enumerator
+        {
+            for (int i = 0; i < Row.size; i++)
+            {
+                this.rows[yCoord].cells[i].RemoveCandidate(candidate);
+            }
+            for (int i = 0; i < Col.size; i++)
+            {
+                this.cols[xCoord].cells[i].RemoveCandidate(candidate);
+            }
+            for (int i = 0; i < Quadrant.sizeByIndex; i++)
+            {
+                this.quadrants[this.cells[xCoord, yCoord].GetIndexOfQuadrant()].cells[i].RemoveCandidate(candidate);
+            }
+        }
+
+        private Row[] FillRows()
+        {
+            Row[] boardInRows = new Row[Board.sizeY];
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                boardInRows[y] = new Row(y);//warum ist das nötig?
+                boardInRows[y].SetCells(this);
+            }
+            return boardInRows;
+        }
+
+        public Col[] FillCols()
+        {
+            Col[] boardInCols = new Col[Board.sizeX];
+            for (int x = 0; x < sizeX; x++)
+            {
+                boardInCols[x] = new Col(x);
+                boardInCols[x].SetCells(this);
+            }
+            return boardInCols;
+        }
+        
+        private Quadrant[] FillQuadrants()
+        {
+            Quadrant[] newBoard = new Quadrant[Board.sizeByQuadIndex];
+            for (int i = 0; i < newBoard.Length; i++)
+            {
+                newBoard[i] = new Quadrant(i);
+                newBoard[i].SetCells(this);
+            }
             return newBoard;
+        }
+
+        public void PrintByCells()
+        {
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                for (int x = 0; x < Board.sizeX; x++)
+                {
+                    cells[x, y].PrintNr();
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void PrintByRows()
+        {
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                for (int i = 0; i < Board.sizeX; i++)
+                {
+                    rows[y].cells[i].PrintNr();
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void PrintByCols()
+        {
+            for (int i = 0; i < Board.sizeY; i++)
+            {
+                for (int x = 0; x < Board.sizeY; x++)
+                {
+                    cols[x].cells[i].PrintNr();
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void PrintByQuads()
+        {
+            for (int i = 0; i < sizeByQuadIndex; i++)
+            {
+                for (int j = 0; j < Quadrant.sizeByIndex; j++)
+                {
+                    this.quadrants[i].cells[j].PrintNr();
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void PrintCandidates()
+        {
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                for (int x = 0; x < Board.sizeX; x++)
+                {
+                    this.cells[x, y].PrintCandidates();
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void PrintCandidatesByRow()
+        {
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                for (int x = 0; x < Board.sizeX; x++)
+                {
+                    rows[y].cells[x].PrintCandidates();
+                }
+                Console.WriteLine();
+            }
         }
     }
 }
