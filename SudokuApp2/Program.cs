@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Linq;
 using System.Collections.Generic;
 
 namespace SudokuApp2
@@ -9,11 +9,7 @@ namespace SudokuApp2
         static void Main(string[] args)
         {
             SudokuSolver s = new SudokuSolver();
-            Board b = s.GetInput();
-            Console.WriteLine();
-            b.PrintByCols();
-            Console.WriteLine();
-            b.PrintCandidates();
+            s.Solve();
             Console.ReadLine();
         }
 

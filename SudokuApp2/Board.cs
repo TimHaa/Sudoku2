@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -93,6 +94,7 @@ namespace SudokuApp2
                 }
                 Console.WriteLine();
             }
+            Console.WriteLine();
         }
 
         public void PrintByRows()

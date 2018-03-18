@@ -8,6 +8,20 @@ namespace SudokuApp2
     {
         public SudokuSolver() { }
 
+        public void Solve()
+        {
+            int i = 0;
+            Board sudokuBoard = GetInput();
+            while (IsEmptyCellLeft(sudokuBoard) && i < 5)//TODO remove second condition later
+            {
+                CheckForSolutions(sudokuBoard);
+                CheckForSharedCandidates(sudokuBoard);
+                sudokuBoard.PrintByCells();
+                sudokuBoard.PrintCandidates();
+                i++;
+            }
+        }
+
         public Board GetInput()
         {
             Board newBoard = new Board();
@@ -44,8 +58,44 @@ namespace SudokuApp2
             return true;
         }
 
-        
+        public bool IsEmptyCellLeft(Board boardInput)
+        {
+            bool isZeroFound = false;
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                for (int x = 0; x < Board.sizeX; x++)
+                {
+                    Cell currCell = boardInput.cells[x, y];
+                    if (!currCell.doesContainNr) { isZeroFound = true; }
+                }
+            }
+            return isZeroFound;
+        }
 
+        public void CheckForSolutions(Board currentBoard)
+        {
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                for (int x = 0; x < Board.sizeX; x++)
+                {
+                    Cell currCell = currentBoard.cells[x, y];
+                    if (currCell.candidates.Count == 1) { currCell.FillIn(currCell.candidates[0], currentBoard); }
+                }
+            }
+        }
+        public void CheckForSharedCandidates(Board board)//leserlichkeit wichtiger als kompaktheit?
+        {
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                board.rows[y].EvaluateClonedCells();
+            }
+            for (int x = 0; x < Board.sizeX; x++)
+            {
+                board.cols[x].EvaluateClonedCells();
+            }
+        }
+
+        
         
     }
 }

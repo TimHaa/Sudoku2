@@ -68,7 +68,6 @@ namespace SudokuApp2
                 this.containedNr = nrToFill;
                 this.doesContainNr = true;
                 board.RemoveCandidates(nrToFill, xPos, yPos);
-                //this.candidates.RemoveAll(doesContainNr);
                 this.candidates = new List<int>();
             }
         }
