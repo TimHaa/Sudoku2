@@ -10,16 +10,19 @@ namespace SudokuApp2
 
         public void Solve()
         {
-            int i = 0;
             Board sudokuBoard = GetInput();
-            while (IsEmptyCellLeft(sudokuBoard) && i < 5)//TODO remove second condition later
+            sudokuBoard.PrintCandidates();
+
+            while (IsEmptyCellLeft(sudokuBoard) )
             {
                 CheckForSolutions(sudokuBoard);
-                CheckForSharedCandidates(sudokuBoard);
-                sudokuBoard.PrintByCells();
+                LockSharedCandidates(sudokuBoard);
+                LockSharedCells(sudokuBoard);
+                sudokuBoard.Print();
                 sudokuBoard.PrintCandidates();
-                i++;
             }
+            sudokuBoard.Print();
+            sudokuBoard.PrintCandidates();
         }
 
         public Board GetInput()
@@ -35,6 +38,23 @@ namespace SudokuApp2
                 }
             }
             return newBoard;
+        }
+
+        public string GetHardInput(int index)
+        {
+            string[] inputSud = new string[9];
+            inputSud[0] = "020608000";
+            inputSud[1] = "580009700";
+            inputSud[2] = "000040000";
+
+            inputSud[3] = "370000500";
+            inputSud[4] = "600000004";
+            inputSud[5] = "008000013";
+
+            inputSud[6] = "000020000";
+            inputSud[7] = "009800036";
+            inputSud[8] = "000306090";
+            return inputSud[index];
         }
 
         public string GetRowInput()//errorhandling
@@ -83,18 +103,36 @@ namespace SudokuApp2
                 }
             }
         }
-        public void CheckForSharedCandidates(Board board)//leserlichkeit wichtiger als kompaktheit?
+        public void LockSharedCandidates(Board board)//leserlichkeit wichtiger als kompaktheit?
         {
             for (int y = 0; y < Board.sizeY; y++)
             {
-                board.rows[y].EvaluateClonedCells();
+                board.rows[y].ComputeClonedCells();
             }
             for (int x = 0; x < Board.sizeX; x++)
             {
-                board.cols[x].EvaluateClonedCells();
+                board.cols[x].ComputeClonedCells();
+            }
+            for (int i = 0; i < Board.sizeByQuadIndex; i++)
+            {
+                board.quadrants[i].ComputeClonedCells();
             }
         }
-
+        public void LockSharedCells(Board board)
+        {
+            for (int y = 0; y < Board.sizeY; y++)
+            {
+                board.rows[y].ComputeClonedNums();
+            }
+            for (int x = 0; x < Board.sizeX; x++)
+            {
+                board.cols[x].ComputeClonedNums();
+            }
+            for (int i = 0; i < Board.sizeByQuadIndex; i++)
+            {
+                board.quadrants[i].ComputeClonedNums(board);
+            }
+        }
         
         
     }

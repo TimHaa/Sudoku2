@@ -36,7 +36,7 @@ namespace SudokuApp2
         }
 
         public void RemoveCandidates(int candidate, int xCoord, int yCoord)//schöner mit enumerator
-        {
+        {//TODO Remove Candidates in Row, Col und Quad aufteilen für CheckIfCellsOfNrHaveSameRow()/Col/Quad
             for (int i = 0; i < Row.size; i++)
             {
                 this.rows[yCoord].cells[i].RemoveCandidate(candidate);
@@ -45,7 +45,7 @@ namespace SudokuApp2
             {
                 this.cols[xCoord].cells[i].RemoveCandidate(candidate);
             }
-            for (int i = 0; i < Quadrant.sizeByIndex; i++)
+            for (int i = 0; i < Quadrant.size; i++)
             {
                 this.quadrants[this.cells[xCoord, yCoord].GetIndexOfQuadrant()].cells[i].RemoveCandidate(candidate);
             }
@@ -76,7 +76,7 @@ namespace SudokuApp2
         private Quadrant[] FillQuadrants()
         {
             Quadrant[] newBoard = new Quadrant[Board.sizeByQuadIndex];
-            for (int i = 0; i < newBoard.Length; i++)
+            for (int i = 0; i < Board.sizeByQuadIndex; i++)
             {
                 newBoard[i] = new Quadrant(i);
                 newBoard[i].SetCells(this);
@@ -84,7 +84,7 @@ namespace SudokuApp2
             return newBoard;
         }
 
-        public void PrintByCells()
+        public void Print()
         {
             for (int y = 0; y < Board.sizeY; y++)
             {
@@ -125,7 +125,7 @@ namespace SudokuApp2
         {
             for (int i = 0; i < sizeByQuadIndex; i++)
             {
-                for (int j = 0; j < Quadrant.sizeByIndex; j++)
+                for (int j = 0; j < Quadrant.size; j++)
                 {
                     this.quadrants[i].cells[j].PrintNr();
                 }
@@ -143,18 +143,7 @@ namespace SudokuApp2
                 }
                 Console.WriteLine();
             }
-        }
-
-        public void PrintCandidatesByRow()
-        {
-            for (int y = 0; y < Board.sizeY; y++)
-            {
-                for (int x = 0; x < Board.sizeX; x++)
-                {
-                    rows[y].cells[x].PrintCandidates();
-                }
-                Console.WriteLine();
-            }
+            Console.WriteLine();
         }
     }
 }

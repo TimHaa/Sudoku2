@@ -42,7 +42,7 @@ namespace SudokuApp2
             {
                 Console.Write(candidates[j]);
             }
-            Console.Write("}");
+            Console.Write("}\t");
         }
 
         public bool IsCellSolved()
@@ -52,7 +52,11 @@ namespace SudokuApp2
 
         public void RemoveCandidate(int candidateToRemove)
         {
-            if (candidates.Contains(candidateToRemove)) { this.candidates.Remove(candidateToRemove); }
+            if (candidates.Contains(candidateToRemove))
+            {
+                //Console.Write("remove candidate " + candidateToRemove + " at " + xPos + "/" + yPos);
+                this.candidates.Remove(candidateToRemove);
+            }
         }
 
         public int GetIndexOfQuadrant()

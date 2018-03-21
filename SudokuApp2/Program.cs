@@ -8,8 +8,13 @@ namespace SudokuApp2
     {
         static void Main(string[] args)
         {
+            //TODO: CleanUp
+            //TODO: Add CheckForLockedTriangle
             SudokuSolver s = new SudokuSolver();
             s.Solve();
+            
+
+            
             Console.ReadLine();
         }
 
