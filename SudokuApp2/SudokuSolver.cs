@@ -12,28 +12,29 @@ namespace SudokuApp2
         {
             Board sudokuBoard = GetInput();
             sudokuBoard.PrintCandidates();
-
-            while (IsEmptyCellLeft(sudokuBoard))
+            int i = 0;
+            while (IsEmptyCellLeft(sudokuBoard)&& i < 6)
             {
                 CheckForSolutions(sudokuBoard);
                 LockSharedCandidates(sudokuBoard);
                 LockSharedCells(sudokuBoard);
                 sudokuBoard.Print();
                 sudokuBoard.PrintCandidates();
+                i++;
             }
             sudokuBoard.Print();
         }
 
         public Board GetInput()
         {
-            Board newBoard = new Board();
-            for (int i = 0; i < Board.SizeY; i++)
+            Board newBoard = new Board(9, 3);
+            for (int i = 0; i < newBoard.Size; i++)
             {
-                string currentRow = GetRowInput();
+                string currentRow = GetRowInput(newBoard.Size);
                 for (int j = 0; j < currentRow.Length; j++)
                 {
                     int currentNr = Convert.ToInt16(currentRow[j]) - '0';
-                    newBoard.rows[i].cells[j].FillIn(currentNr, newBoard);
+                    newBoard.Rows[i].Cells[j].FillIn(currentNr, newBoard);
                 }
             }
             return newBoard;
@@ -56,14 +57,14 @@ namespace SudokuApp2
             return inputSud[index];
         }
 
-        public string GetRowInput()
+        public string GetRowInput(int lineLength)
         {
             string lineInput = Console.ReadLine();
-            if (lineInput.Length == 9 && IsDigitsOnly(lineInput)) { return lineInput; }
+            if (lineInput.Length == lineLength && IsDigitsOnly(lineInput)) { return lineInput; }
             else
             {
                 Console.WriteLine("Wrong Input");
-                return GetRowInput();
+                return GetRowInput(lineLength);
             }
         }
 
@@ -80,11 +81,11 @@ namespace SudokuApp2
         public bool IsEmptyCellLeft(Board boardInput)
         {
             bool isZeroFound = false;
-            for (int y = 0; y < Board.SizeY; y++)
+            for (int y = 0; y < boardInput.Size; y++)
             {
-                for (int x = 0; x < Board.SizeX; x++)
+                for (int x = 0; x < boardInput.Size; x++)
                 {
-                    Cell currCell = boardInput.cells[x, y];
+                    Cell currCell = boardInput.Cells[x, y];
                     if (!currCell.DoesContainNr) { isZeroFound = true; }
                 }
             }
@@ -95,43 +96,43 @@ namespace SudokuApp2
 
         public void CheckForSolutions(Board currentBoard)
         {
-            for (int y = 0; y < Board.SizeY; y++)
+            for (int y = 0; y < currentBoard.Size; y++)
             {
-                for (int x = 0; x < Board.SizeX; x++)
+                for (int x = 0; x < currentBoard.Size; x++)
                 {
-                    Cell currCell = currentBoard.cells[x, y];
+                    Cell currCell = currentBoard.Cells[x, y];
                     if (currCell.Candidates.Count == 1) { currCell.FillIn(currCell.Candidates[0], currentBoard); }
                 }
             }
         }
         public void LockSharedCandidates(Board board)
         {
-            for (int y = 0; y < Board.SizeY; y++)
+            for (int y = 0; y < board.Size; y++)
             {
-                board.rows[y].ComputeClonedCells();
+                board.Rows[y].ComputeClonedCells();
             }
-            for (int x = 0; x < Board.SizeX; x++)
+            for (int x = 0; x < board.Size; x++)
             {
-                board.cols[x].ComputeClonedCells();
+                board.Cols[x].ComputeClonedCells();
             }
-            for (int i = 0; i < Board.SizeByQuadIndex; i++)
+            for (int i = 0; i < board.SizeByQuadrantIndex; i++)
             {
-                board.quadrants[i].ComputeClonedCells();
+                board.Quadrants[i].ComputeClonedCells();
             }
         }
         public void LockSharedCells(Board board)
         {
-            for (int y = 0; y < Board.SizeY; y++)
+            for (int y = 0; y < board.Size; y++)
             {
-                board.rows[y].ComputeClonedNums();
+                board.Rows[y].ComputeClonedNums();
             }
-            for (int x = 0; x < Board.SizeX; x++)
+            for (int x = 0; x < board.Size; x++)
             {
-                board.cols[x].ComputeClonedNums();
+                board.Cols[x].ComputeClonedNums();
             }
-            for (int i = 0; i < Board.SizeByQuadIndex; i++)
+            for (int i = 0; i < board.SizeByQuadrantIndex; i++)
             {
-                board.quadrants[i].ComputeClonedNums(board);
+                board.Quadrants[i].ComputeClonedNums(board);
             }
         }
         

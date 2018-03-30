@@ -7,22 +7,29 @@ namespace SudokuApp2
 {
     class Quadrant
     {
-        public const int Size = Board.SizeByQuadIndex;
-        public int Index;
-        public int XPos;
-        public int YPos;
-        public string XRange;
-        public string YRange;
-        public Cell[] cells = new Cell[Quadrant.Size];
+        public int Size { get; private set; }
+        public int Index { get; set; }
+        public int XPos { get; set; }
+        public int YPos { get; set; }
+        public string XRange { get; set; }
+        public string YRange { get; set; }
+        public Cell[] Cells { get; set; }
 
-        public Quadrant(int indexOfQuadrant)
+        public Quadrant(int indexOfQuadrant, int sideLength)
         {
+            Size = GetSizeOfIndex(sideLength);
             Index = indexOfQuadrant;
             XPos = ConvertIndexToXCoord(indexOfQuadrant);
             YPos = ConvertIndexToYCoord(indexOfQuadrant);
             XRange = GetXRange();
             YRange = GetYRange();
+            Cells = new Cell[Size];
         }
+        private int GetSizeOfIndex(int side)
+        {
+            return side * side;
+        }
+
         private string GetXRange()
         {
             if (XPos == 0) { return "012"; }
@@ -49,9 +56,9 @@ namespace SudokuApp2
         }
         public void Print()
         {
-            for (int i = 0; i < Quadrant.Size; i++)
+            for (int i = 0; i < Size; i++)
             {
-                this.cells[i].PrintNr();
+                this.Cells[i].PrintNr();
             }
             Console.WriteLine();
         }
@@ -67,22 +74,22 @@ namespace SudokuApp2
         }
         public void SetCells(Board targetBoard)
         {
-            for (int j = 0; j < Quadrant.Size; j++)
+            for (int j = 0; j < Size; j++)
             {
                 int xPosCell = ConvertCellIndexToXInBoard(j);
                 int yPosCell = ConvertCellIndexToYInBoard(j);
-                this.cells[j] = targetBoard.cells[xPosCell, yPosCell];
+                this.Cells[j] = targetBoard.Cells[xPosCell, yPosCell];
             }
         }
 
         public void ComputeClonedCells()
         {
-            for (int i = 0; i < Board.SizeByQuadIndex; i++)
+            for (int i = 0; i < Size; i++)
             {
-                Cell currentCell = cells[i];
+                Cell currentCell = Cells[i];
                 List<int> cloneList = new List<int>();
                 int cloneCount = CountCellClones(currentCell, cloneList);
-                if (IsCandidateCountEqualCloneCount(currentCell, cloneCount))
+                if (IsCandidateCountEqualCloneCount(currentCell.Candidates.Count, cloneCount))
                 {
                     RemoveLockedCandidates(currentCell.Candidates, cloneList);
                 }
@@ -91,10 +98,10 @@ namespace SudokuApp2
         public int CountCellClones(Cell currCell, List<int> cloneList)
         {
             int count = 0;
-            for (int i = 0; i < Quadrant.Size; i++)
+            for (int i = 0; i < Size; i++)
             {
-                Cell iteratingCell = cells[i];
-                if (AreClones(currCell, iteratingCell))
+                Cell iteratingCell = Cells[i];
+                if (AreClones(currCell.Candidates, iteratingCell.Candidates))
                 {
                     count++;
                     cloneList.Add(i);
@@ -105,7 +112,7 @@ namespace SudokuApp2
         }
         public void RemoveLockedCandidates(List<int> candidatesToRemove, List<int> cloneList)
         {
-            for (int i = 0; i < Quadrant.Size; i++)
+            for (int i = 0; i < Size; i++)
             {
                 if (!IsClone(cloneList, i))
                 {
@@ -117,17 +124,17 @@ namespace SudokuApp2
         {
             foreach (int nr in candidatesToRemove)
             {
-                cells[indexOfCell].Candidates.Remove(nr);
+                Cells[indexOfCell].Candidates.Remove(nr);
             }
         }
-        public bool AreClones(Cell input1, Cell input2)
+        public bool AreClones(List<int> cell1Candidates, List<int> cell2Candidates)
         {
             bool noDiff = true;
-            if (input1.Candidates.Count != 0 && input2.Candidates.Count != 0)
+            if (cell1Candidates.Count != 0 && cell2Candidates.Count != 0)
             {
-                foreach (int candidate in input2.Candidates)
+                foreach (int candidate in cell2Candidates)
                 {
-                    if (!input1.Candidates.Contains(candidate))
+                    if (!cell1Candidates.Contains(candidate))
                     {
                         noDiff = false;
                         break;
@@ -137,11 +144,10 @@ namespace SudokuApp2
             else
             { noDiff = false; }
             return noDiff;
-            //return (input1.candidates.SequenceEqual(input2.candidates));
         }
-        public bool IsCandidateCountEqualCloneCount(Cell input, int coupleCount)
+        public bool IsCandidateCountEqualCloneCount(int candidateCount, int coupleCount)
         {
-            return (input.Candidates.Count == coupleCount && coupleCount != 0);
+            return (candidateCount == coupleCount && coupleCount != 0);
         }
         public bool IsClone(List<int> cloneList, int index)
         {
@@ -153,7 +159,7 @@ namespace SudokuApp2
         public void ComputeClonedNums(Board targetBoard)
         {
             string[] possibleCellsPerNum = GetPossibleCellsPerNum();
-            for (int num = 0; num < Cell.HighestPossible; num++)
+            for (int num = 0; num < Cells[0].HighestPossible; num++)
             {
                 string possibleCells = possibleCellsPerNum[num];
                 List<int> cloneList = new List<int>();
@@ -167,13 +173,12 @@ namespace SudokuApp2
         }
         public string[] GetPossibleCellsPerNum()
         {
-            string[] possibleCellsPerNum = new string[Cell.HighestPossible];
-            //for (int i = 0; i < 9; i++) { possibleCellsPerNum[i] = ""; }//doesnt work with possibleCells != "" above
-            for (int nr = 0; nr < Cell.HighestPossible; nr++)
+            string[] possibleCellsPerNum = new string[Cells[0].HighestPossible];
+            for (int nr = 0; nr < Cells[0].HighestPossible; nr++)
             {
-                for (int y = 0; y < Quadrant.Size; y++)
+                for (int y = 0; y < Size; y++)
                 {
-                    if (IsCellPossible(nr, this.cells[y]))
+                    if (IsNrInCandidates(nr, Cells[y].Candidates))
                     {
                         possibleCellsPerNum[nr] += y.ToString();
                     }
@@ -181,16 +186,16 @@ namespace SudokuApp2
             }
             return possibleCellsPerNum;
         }
-        public bool IsCellPossible(int nr, Cell currCell)
+        public bool IsNrInCandidates(int nr, List<int> candidates)
         {
             nr++;
-            return currCell.Candidates.Contains(nr);
+            return candidates.Contains(nr);
         }
 
         public int CountNumClones(int currNum, string[] possibleCells, List<int> cloneList)
         {
             int count = 0;
-            for (int n = 0; n < Cell.HighestPossible; n++)
+            for (int n = 0; n < Cells[0].HighestPossible; n++)
             {
                 if (IsString2ContainedIn1(possibleCells[currNum], possibleCells[n]))
                 {
@@ -223,17 +228,17 @@ namespace SudokuApp2
         
         public void RemoveCandidateExcept(int numToRemove, string exceptions)
         {
-            for (int y = 0; y < Quadrant.Size; y++)
+            for (int y = 0; y < Size; y++)
             {
                 if (!exceptions.Contains(Convert.ToChar(y + '2')))
                 {
-                    cells[y].RemoveCandidate(numToRemove + 1);
+                    Cells[y].RemoveCandidate(numToRemove + 1);
                 }
             }
         }
         public void CleanLockedCells(string possibleCells, List<int> cloneList)
         {
-            for (int n = 0; n <= Cell.HighestPossible; n++)
+            for (int n = 0; n <= Cells[0].HighestPossible; n++)
             {
                 if (!cloneList.Contains(n))
                 {
@@ -243,11 +248,11 @@ namespace SudokuApp2
         }
         public void RemoveCandidateIn(int numToRemove, string positions)
         {
-            for (int y = 0; y < Quadrant.Size; y++)
+            for (int y = 0; y < Size; y++)
             {
                 if (positions.Contains(y.ToString()))
                 {
-                    cells[y].RemoveCandidate(numToRemove + 1);
+                    Cells[y].RemoveCandidate(numToRemove + 1);
                 }
             }
         }
@@ -262,11 +267,11 @@ namespace SudokuApp2
                     int x = 0;
                     if (AreSameRow(cellsPerNum[num], ref y))
                     {
-                        board.rows[y].RemoveCandidateExcept(num, XRange);
+                        board.Rows[y].RemoveCandidateExcept(num, XRange);
                     }
                     else if (AreSameCol(cellsPerNum[num], ref x))
                     {
-                        board.cols[x].RemoveCandidateExcept(num, YRange);
+                        board.Cols[x].RemoveCandidateExcept(num, YRange);
                     }
                 }
             }
@@ -285,7 +290,7 @@ namespace SudokuApp2
         {
             if (0 <= Convert.ToInt16(c - '0') && Convert.ToInt16(c - '0') < 9 && 0 <= Convert.ToInt16(first - '0') && Convert.ToInt16(first - '0') < 9)
             {
-                return cells[(Convert.ToInt16(c - '0'))].YPos != cells[(Convert.ToInt16(first - '0'))].YPos;
+                return Cells[(Convert.ToInt16(c - '0'))].YPos != Cells[(Convert.ToInt16(first - '0'))].YPos;
 
             }
             else { Console.WriteLine("false input"); return true; }
@@ -304,7 +309,7 @@ namespace SudokuApp2
         {
             if (0 <= Convert.ToInt16(c - '0') && Convert.ToInt16(c - '0') < 9 && 0 <= Convert.ToInt16(first - '0') && Convert.ToInt16(first - '0') < 9)
             {
-                return cells[(Convert.ToInt16(c - '0'))].XPos != cells[(Convert.ToInt16(first - '0'))].XPos;
+                return Cells[(Convert.ToInt16(c - '0'))].XPos != Cells[(Convert.ToInt16(first - '0'))].XPos;
 
             }
             else { Console.WriteLine("false input"); return true; }

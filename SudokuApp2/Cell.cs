@@ -6,16 +6,18 @@ namespace SudokuApp2
 {
     class Cell
     {
-        public const int HighestPossible = 9;
-        public List<int> Candidates = new List<int>();
-        public bool DoesContainNr;
-        public int ContainedNr;
-        public int XPos;
-        public int YPos;
-        public int IndexOfQuad;
+        public int HighestPossible { get; private set; }
+        public List<int> Candidates { get; set; }
+        public bool DoesContainNr { get; set; }
+        public int ContainedNr { get; set; }
+        public int XPos { get; set; }
+        public int YPos { get; set; }
+        public int IndexOfQuad { get; set; }
 
-        public Cell(int xCoordInBoard, int yCoordInBoard)
+        public Cell(int xCoordInBoard, int yCoordInBoard, int highestPossibleCandidate)
         {
+            HighestPossible = highestPossibleCandidate;
+            Candidates = new List<int>();
             Candidates = FillCandidates();
             DoesContainNr = false;
             IndexOfQuad = GetIndexOfQuadrant();
@@ -26,7 +28,7 @@ namespace SudokuApp2
         public List<int> FillCandidates()
         {
             List<int> allPossibleCandidates = new List<int>();
-            for (int i = 1; i <= Cell.HighestPossible; i++) { allPossibleCandidates.Add(i); }
+            for (int i = 1; i <= HighestPossible; i++) { allPossibleCandidates.Add(i); }
             return allPossibleCandidates;
         }
 

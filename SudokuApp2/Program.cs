@@ -8,13 +8,11 @@ namespace SudokuApp2
     {
         static void Main(string[] args)
         {
-            //TODO: CleanUp
-            //TODO: Add CheckForLockedTriangle
+            //TODO Add abstract class for Row, Col and Quadrant to inherit from
+            //TODO Add CheckForLockedTriangle
             SudokuSolver s = new SudokuSolver();
             s.Solve();
-            
 
-            
             Console.ReadLine();
         }
 

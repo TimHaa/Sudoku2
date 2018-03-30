@@ -7,30 +7,33 @@ namespace SudokuApp2
 {
     class Col
     {
-        public const int Size = Board.SizeX;
-        public int xPos;
-        public Cell[] cells = new Cell[Size];
-        public Col(int xCoordInBoard)
+        private int Size;
+        public int XPos { get; set; }
+        public Cell[] Cells { get; set; }
+
+        public Col(int xCoordInBoard, int size)
         {
-            xPos = xCoordInBoard;
+            Size = size;
+            Cells = new Cell[Size];
+            XPos = xCoordInBoard;
         }
         
         public void SetCells(Board targetBoard)
         {
-            for (int i = 0; i < Col.Size; i++)
+            for (int i = 0; i < Size; i++)
             {
-                this.cells[i] = targetBoard.cells[xPos, i];
+                this.Cells[i] = targetBoard.Cells[XPos, i];
             }
         }
         
         public void ComputeClonedCells()
         {
-            for (int y = 0; y < Col.Size; y++)
+            for (int y = 0; y < Size; y++)
             {
-                Cell currentCell = cells[y];
+                Cell currentCell = Cells[y];
                 List<int> cloneList = new List<int>();
                 int cloneCount = CountCellClones(currentCell, cloneList);
-                if (IsCandidateCountEqualCloneCount(currentCell, cloneCount))
+                if (IsCandidateCountEqualCloneCount(currentCell.Candidates.Count, cloneCount))
                 {
                     RemoveLockedCandidates(currentCell.Candidates, cloneList);
                 }
@@ -39,10 +42,10 @@ namespace SudokuApp2
         public int CountCellClones(Cell currCell, List<int> cloneList)
         {
             int count = 0;
-            for (int i = 0; i < Col.Size; i++)
+            for (int i = 0; i < Size; i++)
             {
-                Cell iteratingCell = cells[i];
-                if (AreClones(currCell, iteratingCell))
+                Cell iteratingCell = Cells[i];
+                if (AreClones(currCell.Candidates, iteratingCell.Candidates))
                 {
                     count++;
                     cloneList.Add(i);
@@ -53,7 +56,7 @@ namespace SudokuApp2
         }
         public void RemoveLockedCandidates(List<int> candidatesToRemove, List<int> cloneList)
         {
-            for (int i = 0; i < Col.Size; i++)
+            for (int i = 0; i < Size; i++)
             {
                 if (!IsClone(i, cloneList))
                 {
@@ -65,17 +68,17 @@ namespace SudokuApp2
         {
             foreach (int nr in candidatesToRemove)
             {
-                cells[indexOfCell].Candidates.Remove(nr);
+                Cells[indexOfCell].Candidates.Remove(nr);
             }
         }
-        public bool AreClones(Cell input1, Cell input2)
+        public bool AreClones(List<int> cell1Candidates, List<int> cell2Candidates)
         {
             bool noDiff = true;
-            if (input1.Candidates.Count != 0 && input2.Candidates.Count != 0)
+            if (cell1Candidates.Count != 0 && cell2Candidates.Count != 0)
             {
-                foreach (int candidate in input2.Candidates)
+                foreach (int candidate in cell2Candidates)
                 {
-                    if (!input1.Candidates.Contains(candidate))
+                    if (!cell1Candidates.Contains(candidate))
                     {
                         noDiff = false;
                         break;
@@ -86,9 +89,9 @@ namespace SudokuApp2
             { noDiff = false; }
             return noDiff;
         }
-        public bool IsCandidateCountEqualCloneCount(Cell input, int coupleCount)
+        public bool IsCandidateCountEqualCloneCount(int candidateCount, int coupleCount)
         {
-            return (input.Candidates.Count == coupleCount && coupleCount != 0);
+            return (candidateCount == coupleCount && coupleCount != 0);
         }
         public bool IsClone(int index, List<int> cloneList)
         {
@@ -100,7 +103,7 @@ namespace SudokuApp2
         public void ComputeClonedNums()
         {
             string[] possibleCellsPerNum = GetPossibleCellsPerNum();
-            for (int num = 0; num < Cell.HighestPossible; num++)
+            for (int num = 0; num < Cells[0].HighestPossible; num++)//oder besser Boardsize
             {
                 string possibleCells = possibleCellsPerNum[num];
                 List<int> cloneList = new List<int>();
@@ -113,12 +116,12 @@ namespace SudokuApp2
         }
         public string[] GetPossibleCellsPerNum()
         {
-            string[] possibleCellsPerNum = new string[Cell.HighestPossible];
-            for (int nr = 0; nr < Cell.HighestPossible; nr++)
+            string[] possibleCellsPerNum = new string[Cells[0].HighestPossible];
+            for (int nr = 0; nr < Cells[0].HighestPossible; nr++)
             {
-                for (int y = 0; y < Col.Size; y++)
+                for (int y = 0; y < Size; y++)
                 {
-                    if (IsCellPossible(nr, cells[y]))
+                    if (IsCellPossible(nr, Cells[y]))
                     {
                         possibleCellsPerNum[nr] += y.ToString();
                     }
@@ -134,7 +137,7 @@ namespace SudokuApp2
         public int CountNumClones(int currNum, string[] possibleCells, List<int> cloneList)
         {
             int count = 0;
-            for (int n = 0; n < Cell.HighestPossible; n++)
+            for (int n = 0; n < Cells[0].HighestPossible; n++)
             {
                 if (IsString2ContainedIn1(possibleCells[currNum], possibleCells[n]))
                 {
@@ -165,17 +168,17 @@ namespace SudokuApp2
         }
         public void RemoveCandidateExcept(int numToRemove, string exceptions)
         {
-            for (int y = 0; y < Col.Size; y++)
+            for (int y = 0; y < Size; y++)
             {
                 if (!exceptions.Contains(Convert.ToChar(y + '0')))
                 {
-                    cells[y].RemoveCandidate(numToRemove + 1);
+                    Cells[y].RemoveCandidate(numToRemove + 1);
                 }
             }
         }
         public void CleanLockedCells(string possibleCells, List<int> cloneList)
         {
-            for (int n = 0; n <= Cell.HighestPossible; n++)
+            for (int n = 0; n <= Cells[0].HighestPossible; n++)
             {
                 if (!cloneList.Contains(n))
                 {
@@ -185,11 +188,11 @@ namespace SudokuApp2
         }
         public void RemoveCandidateIn(int numToRemove, string positions)
         {
-            for (int y = 0; y < Col.Size; y++)
+            for (int y = 0; y < Size; y++)
             {
                 if (positions.Contains(y.ToString()))
                 {
-                    cells[y].RemoveCandidate(numToRemove + 1);
+                    Cells[y].RemoveCandidate(numToRemove + 1);
                 }
             }
         }
