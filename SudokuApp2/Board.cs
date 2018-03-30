@@ -7,13 +7,13 @@ namespace SudokuApp2
 {
     class Board
     {
-        public const int sizeX = 9;
-        public const int sizeY = 9;
-        public const int sizeByQuadIndex = 9;
-        public Cell[,] cells = new Cell[sizeX, sizeY];
-        public Row[] rows = new Row[sizeY];
-        public Col[] cols = new Col[sizeX];
-        public Quadrant[] quadrants = new Quadrant[sizeByQuadIndex];
+        public const int SizeX = 9;
+        public const int SizeY = 9;
+        public const int SizeByQuadIndex = 9;
+        public Cell[,] cells = new Cell[SizeX, SizeY];
+        public Row[] rows = new Row[SizeY];
+        public Col[] cols = new Col[SizeX];
+        public Quadrant[] quadrants = new Quadrant[SizeByQuadIndex];
         public Board()
         {
             cells = FillCells();
@@ -24,10 +24,10 @@ namespace SudokuApp2
 
         private Cell[,] FillCells()
         {
-            Cell[,] boardInCells = new Cell[Board.sizeX, Board.sizeY];
-            for (int i = 0; i < Board.sizeX; i++)
+            Cell[,] boardInCells = new Cell[Board.SizeX, Board.SizeY];
+            for (int i = 0; i < Board.SizeX; i++)
             {
-                for (int j = 0; j < Board.sizeY; j++)
+                for (int j = 0; j < Board.SizeY; j++)
                 {
                     boardInCells[i, j] = new Cell(i, j);
                 }
@@ -35,17 +35,17 @@ namespace SudokuApp2
             return boardInCells;
         }
 
-        public void RemoveCandidates(int candidate, int xCoord, int yCoord)//schöner mit enumerator
-        {//TODO Remove Candidates in Row, Col und Quad aufteilen für CheckIfCellsOfNrHaveSameRow()/Col/Quad
-            for (int i = 0; i < Row.size; i++)
+        public void RemoveCandidates(int candidate, int xCoord, int yCoord)
+        {
+            for (int i = 0; i < Row.Size; i++)
             {
                 this.rows[yCoord].cells[i].RemoveCandidate(candidate);
             }
-            for (int i = 0; i < Col.size; i++)
+            for (int i = 0; i < Col.Size; i++)
             {
                 this.cols[xCoord].cells[i].RemoveCandidate(candidate);
             }
-            for (int i = 0; i < Quadrant.size; i++)
+            for (int i = 0; i < Quadrant.Size; i++)
             {
                 this.quadrants[this.cells[xCoord, yCoord].GetIndexOfQuadrant()].cells[i].RemoveCandidate(candidate);
             }
@@ -53,8 +53,8 @@ namespace SudokuApp2
 
         private Row[] FillRows()
         {
-            Row[] boardInRows = new Row[Board.sizeY];
-            for (int y = 0; y < Board.sizeY; y++)
+            Row[] boardInRows = new Row[Board.SizeY];
+            for (int y = 0; y < Board.SizeY; y++)
             {
                 boardInRows[y] = new Row(y);//warum ist das nötig?
                 boardInRows[y].SetCells(this);
@@ -64,8 +64,8 @@ namespace SudokuApp2
 
         public Col[] FillCols()
         {
-            Col[] boardInCols = new Col[Board.sizeX];
-            for (int x = 0; x < sizeX; x++)
+            Col[] boardInCols = new Col[Board.SizeX];
+            for (int x = 0; x < SizeX; x++)
             {
                 boardInCols[x] = new Col(x);
                 boardInCols[x].SetCells(this);
@@ -75,8 +75,8 @@ namespace SudokuApp2
         
         private Quadrant[] FillQuadrants()
         {
-            Quadrant[] newBoard = new Quadrant[Board.sizeByQuadIndex];
-            for (int i = 0; i < Board.sizeByQuadIndex; i++)
+            Quadrant[] newBoard = new Quadrant[Board.SizeByQuadIndex];
+            for (int i = 0; i < Board.SizeByQuadIndex; i++)
             {
                 newBoard[i] = new Quadrant(i);
                 newBoard[i].SetCells(this);
@@ -86,9 +86,9 @@ namespace SudokuApp2
 
         public void Print()
         {
-            for (int y = 0; y < Board.sizeY; y++)
+            for (int y = 0; y < Board.SizeY; y++)
             {
-                for (int x = 0; x < Board.sizeX; x++)
+                for (int x = 0; x < Board.SizeX; x++)
                 {
                     cells[x, y].PrintNr();
                 }
@@ -99,9 +99,9 @@ namespace SudokuApp2
 
         public void PrintByRows()
         {
-            for (int y = 0; y < Board.sizeY; y++)
+            for (int y = 0; y < Board.SizeY; y++)
             {
-                for (int i = 0; i < Board.sizeX; i++)
+                for (int i = 0; i < Board.SizeX; i++)
                 {
                     rows[y].cells[i].PrintNr();
                 }
@@ -111,9 +111,9 @@ namespace SudokuApp2
 
         public void PrintByCols()
         {
-            for (int i = 0; i < Board.sizeY; i++)
+            for (int i = 0; i < Board.SizeY; i++)
             {
-                for (int x = 0; x < Board.sizeY; x++)
+                for (int x = 0; x < Board.SizeY; x++)
                 {
                     cols[x].cells[i].PrintNr();
                 }
@@ -123,9 +123,9 @@ namespace SudokuApp2
 
         public void PrintByQuads()
         {
-            for (int i = 0; i < sizeByQuadIndex; i++)
+            for (int i = 0; i < SizeByQuadIndex; i++)
             {
-                for (int j = 0; j < Quadrant.size; j++)
+                for (int j = 0; j < Quadrant.Size; j++)
                 {
                     this.quadrants[i].cells[j].PrintNr();
                 }
@@ -135,9 +135,9 @@ namespace SudokuApp2
 
         public void PrintCandidates()
         {
-            for (int y = 0; y < Board.sizeY; y++)
+            for (int y = 0; y < Board.SizeY; y++)
             {
-                for (int x = 0; x < Board.sizeX; x++)
+                for (int x = 0; x < Board.SizeX; x++)
                 {
                     this.cells[x, y].PrintCandidates();
                 }

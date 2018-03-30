@@ -6,62 +6,61 @@ namespace SudokuApp2
 {
     class Cell
     {
-        public const int highestPossible = 9;
-        public List<int> candidates = new List<int>();
-        public bool doesContainNr;
-        public int containedNr;
-        public int xPos;
-        public int yPos;
-        public int indexOfQuad;
+        public const int HighestPossible = 9;
+        public List<int> Candidates = new List<int>();
+        public bool DoesContainNr;
+        public int ContainedNr;
+        public int XPos;
+        public int YPos;
+        public int IndexOfQuad;
 
         public Cell(int xCoordInBoard, int yCoordInBoard)
         {
-            candidates = FillCandidates();
-            doesContainNr = false;
-            indexOfQuad = GetIndexOfQuadrant();
-            xPos = xCoordInBoard;//are coordinates really important?
-            yPos = yCoordInBoard;
+            Candidates = FillCandidates();
+            DoesContainNr = false;
+            IndexOfQuad = GetIndexOfQuadrant();
+            XPos = xCoordInBoard;
+            YPos = yCoordInBoard;
         }
 
         public List<int> FillCandidates()
         {
             List<int> allPossibleCandidates = new List<int>();
-            for (int i = 1; i <= Cell.highestPossible; i++) { allPossibleCandidates.Add(i); }//cell.highesPossible or just highestPossible better?
+            for (int i = 1; i <= Cell.HighestPossible; i++) { allPossibleCandidates.Add(i); }
             return allPossibleCandidates;
         }
 
         public void PrintNr()
         {
-            Console.Write(containedNr);
+            Console.Write(ContainedNr);
         }
 
         public void PrintCandidates()
         {
             Console.Write("{");
-            for (int j = 0; j < candidates.Count; j++)
+            for (int j = 0; j < Candidates.Count; j++)
             {
-                Console.Write(candidates[j]);
+                Console.Write(Candidates[j]);
             }
             Console.Write("}\t");
         }
 
         public bool IsCellSolved()
         {
-            return doesContainNr;
+            return DoesContainNr;
         }
 
         public void RemoveCandidate(int candidateToRemove)
         {
-            if (candidates.Contains(candidateToRemove))
+            if (Candidates.Contains(candidateToRemove))
             {
-                //Console.Write("remove candidate " + candidateToRemove + " at " + xPos + "/" + yPos);
-                this.candidates.Remove(candidateToRemove);
+                this.Candidates.Remove(candidateToRemove);
             }
         }
 
         public int GetIndexOfQuadrant()
         {
-            int indexOfContainingQuadrant = xPos / 3 + yPos - (yPos % 3);
+            int indexOfContainingQuadrant = XPos / 3 + YPos - (YPos % 3);
             return indexOfContainingQuadrant;
         }
 
@@ -69,10 +68,10 @@ namespace SudokuApp2
         {
             if (nrToFill != 0)
             {
-                this.containedNr = nrToFill;
-                this.doesContainNr = true;
-                board.RemoveCandidates(nrToFill, xPos, yPos);
-                this.candidates = new List<int>();
+                this.ContainedNr = nrToFill;
+                this.DoesContainNr = true;
+                board.RemoveCandidates(nrToFill, XPos, YPos);
+                this.Candidates = new List<int>();
             }
         }
     }

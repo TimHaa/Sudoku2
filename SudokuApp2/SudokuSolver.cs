@@ -13,7 +13,7 @@ namespace SudokuApp2
             Board sudokuBoard = GetInput();
             sudokuBoard.PrintCandidates();
 
-            while (IsEmptyCellLeft(sudokuBoard) )
+            while (IsEmptyCellLeft(sudokuBoard))
             {
                 CheckForSolutions(sudokuBoard);
                 LockSharedCandidates(sudokuBoard);
@@ -22,13 +22,12 @@ namespace SudokuApp2
                 sudokuBoard.PrintCandidates();
             }
             sudokuBoard.Print();
-            sudokuBoard.PrintCandidates();
         }
 
         public Board GetInput()
         {
             Board newBoard = new Board();
-            for (int i = 0; i < Board.sizeY; i++)
+            for (int i = 0; i < Board.SizeY; i++)
             {
                 string currentRow = GetRowInput();
                 for (int j = 0; j < currentRow.Length; j++)
@@ -57,7 +56,7 @@ namespace SudokuApp2
             return inputSud[index];
         }
 
-        public string GetRowInput()//errorhandling
+        public string GetRowInput()
         {
             string lineInput = Console.ReadLine();
             if (lineInput.Length == 9 && IsDigitsOnly(lineInput)) { return lineInput; }
@@ -81,54 +80,56 @@ namespace SudokuApp2
         public bool IsEmptyCellLeft(Board boardInput)
         {
             bool isZeroFound = false;
-            for (int y = 0; y < Board.sizeY; y++)
+            for (int y = 0; y < Board.SizeY; y++)
             {
-                for (int x = 0; x < Board.sizeX; x++)
+                for (int x = 0; x < Board.SizeX; x++)
                 {
                     Cell currCell = boardInput.cells[x, y];
-                    if (!currCell.doesContainNr) { isZeroFound = true; }
+                    if (!currCell.DoesContainNr) { isZeroFound = true; }
                 }
             }
             return isZeroFound;
         }
 
+
+
         public void CheckForSolutions(Board currentBoard)
         {
-            for (int y = 0; y < Board.sizeY; y++)
+            for (int y = 0; y < Board.SizeY; y++)
             {
-                for (int x = 0; x < Board.sizeX; x++)
+                for (int x = 0; x < Board.SizeX; x++)
                 {
                     Cell currCell = currentBoard.cells[x, y];
-                    if (currCell.candidates.Count == 1) { currCell.FillIn(currCell.candidates[0], currentBoard); }
+                    if (currCell.Candidates.Count == 1) { currCell.FillIn(currCell.Candidates[0], currentBoard); }
                 }
             }
         }
-        public void LockSharedCandidates(Board board)//leserlichkeit wichtiger als kompaktheit?
+        public void LockSharedCandidates(Board board)
         {
-            for (int y = 0; y < Board.sizeY; y++)
+            for (int y = 0; y < Board.SizeY; y++)
             {
                 board.rows[y].ComputeClonedCells();
             }
-            for (int x = 0; x < Board.sizeX; x++)
+            for (int x = 0; x < Board.SizeX; x++)
             {
                 board.cols[x].ComputeClonedCells();
             }
-            for (int i = 0; i < Board.sizeByQuadIndex; i++)
+            for (int i = 0; i < Board.SizeByQuadIndex; i++)
             {
                 board.quadrants[i].ComputeClonedCells();
             }
         }
         public void LockSharedCells(Board board)
         {
-            for (int y = 0; y < Board.sizeY; y++)
+            for (int y = 0; y < Board.SizeY; y++)
             {
                 board.rows[y].ComputeClonedNums();
             }
-            for (int x = 0; x < Board.sizeX; x++)
+            for (int x = 0; x < Board.SizeX; x++)
             {
                 board.cols[x].ComputeClonedNums();
             }
-            for (int i = 0; i < Board.sizeByQuadIndex; i++)
+            for (int i = 0; i < Board.SizeByQuadIndex; i++)
             {
                 board.quadrants[i].ComputeClonedNums(board);
             }
