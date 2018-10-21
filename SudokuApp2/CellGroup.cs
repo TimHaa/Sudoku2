@@ -10,18 +10,23 @@ namespace SudokuApp2
         protected int Size;
         public Cell[] Cells { get; set; }
 
-        public CellGroup(int xCoordInBoard, int size)
+        public CellGroup(int size)
         {
             Size = size;
             Cells = new Cell[Size];
         }
+        public CellGroup()
+        { }
+
         public abstract void SetCells(Board targetBoard);
+
+
 
         public void ComputeClonedCells()
         {
-            for (int y = 0; y < Size; y++)
+            for (int i = 0; i < Size; i++)
             {
-                Cell currentCell = Cells[y];
+                Cell currentCell = Cells[i];
                 List<int> cloneList = new List<int>();
                 int cloneCount = CountCellClones(currentCell, cloneList);
                 if (IsCandidateCountEqualCloneCount(currentCell.Candidates.Count, cloneCount))
@@ -41,15 +46,15 @@ namespace SudokuApp2
                     count++;
                     cloneList.Add(i);
                 }
-
             }
+
             return count;
         }
         public void RemoveLockedCandidates(List<int> candidatesToRemove, List<int> cloneList)
         {
             for (int i = 0; i < Size; i++)
             {
-                if (!IsClone(cloneList, i))
+                if (!IsClone(i, cloneList))
                 {
                     RemoveCandidates(candidatesToRemove, i);
                 }
@@ -62,14 +67,14 @@ namespace SudokuApp2
                 Cells[indexOfCell].Candidates.Remove(nr);
             }
         }
-        public bool AreClones(List<int> input1Candidates, List<int> input2Candidates)
+        public bool AreClones(List<int> cell1Candidates, List<int> cell2Candidates)
         {
             bool noDiff = true;
-            if (input1Candidates.Count != 0 && input2Candidates.Count != 0)
+            if (cell1Candidates.Count != 0 && cell2Candidates.Count != 0)
             {
-                foreach (int candidate in input2Candidates)
+                foreach (int candidate in cell2Candidates)
                 {
-                    if (!input1Candidates.Contains(candidate))
+                    if (!cell1Candidates.Contains(candidate))
                     {
                         noDiff = false;
                         break;
@@ -84,7 +89,7 @@ namespace SudokuApp2
         {
             return (candidateCount == coupleCount && coupleCount != 0);
         }
-        public bool IsClone(List<int> cloneList, int index)
+        public bool IsClone(int index, List<int> cloneList)
         {
             return cloneList.Contains(index);
         }
@@ -94,7 +99,7 @@ namespace SudokuApp2
         public void ComputeClonedNums()
         {
             string[] possibleCellsPerNum = GetPossibleCellsPerNum();
-            for (int num = 0; num < Cells[0].HighestPossible; num++)
+            for (int num = 0; num < Cells[0].HighestPossible; num++)//oder besser Boardsize
             {
                 string possibleCells = possibleCellsPerNum[num];
                 List<int> cloneList = new List<int>();
@@ -110,11 +115,11 @@ namespace SudokuApp2
             string[] possibleCellsPerNum = new string[Cells[0].HighestPossible];
             for (int nr = 0; nr < Cells[0].HighestPossible; nr++)
             {
-                for (int x = 0; x < Size; x++)
+                for (int y = 0; y < Size; y++)
                 {
-                    if (IsCellPossible(nr, Cells[x]))
+                    if (IsCellPossible(nr, Cells[y]))
                     {
-                        possibleCellsPerNum[nr] += x.ToString();
+                        possibleCellsPerNum[nr] += y.ToString();
                     }
                 }
             }
@@ -157,14 +162,13 @@ namespace SudokuApp2
             }
             return isContained;
         }
-
         public void RemoveCandidateExcept(int numToRemove, string exceptions)
         {
-            for (int x = 0; x < Size; x++)
+            for (int y = 0; y < Size; y++)
             {
-                if (!exceptions.Contains(Convert.ToChar(x + '0')))
+                if (!exceptions.Contains(Convert.ToChar(y + '0')))
                 {
-                    Cells[x].RemoveCandidate(numToRemove + 1);
+                    Cells[y].RemoveCandidate(numToRemove + 1);
                 }
             }
         }
@@ -180,11 +184,11 @@ namespace SudokuApp2
         }
         public void RemoveCandidateIn(int numToRemove, string positions)
         {
-            for (int x = 0; x < Size; x++)
+            for (int y = 0; y < Size; y++)
             {
-                if (positions.Contains(x.ToString()))
+                if (positions.Contains(y.ToString()))
                 {
-                    Cells[x].RemoveCandidate(numToRemove + 1);
+                    Cells[y].RemoveCandidate(numToRemove + 1);
                 }
             }
         }

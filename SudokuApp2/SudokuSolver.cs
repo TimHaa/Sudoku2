@@ -30,7 +30,7 @@ namespace SudokuApp2
             Board newBoard = new Board(9, 3);
             for (int i = 0; i < newBoard.Size; i++)
             {
-                string currentRow = GetRowInput(newBoard.Size);
+                string currentRow = GetHardInput(i);//GetRowInput(newBoard.Size);
                 for (int j = 0; j < currentRow.Length; j++)
                 {
                     int currentNr = Convert.ToInt16(currentRow[j]) - '0';

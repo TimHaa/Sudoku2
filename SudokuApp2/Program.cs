@@ -8,7 +8,8 @@ namespace SudokuApp2
     {
         static void Main(string[] args)
         {
-            //TODO Add abstract class for Row, Col and Quadrant to inherit from
+            //Q: Constructor of Cellgroup needed for Quadrant?
+
             //TODO Add CheckForLockedTriangle
             SudokuSolver s = new SudokuSolver();
             s.Solve();

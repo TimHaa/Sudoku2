@@ -9,11 +9,12 @@ namespace SudokuApp2
     {
         public int XPos { get; set; }
 
-        public Col(int xCoordInBoard, int size) : base(xCoordInBoard, size)
+        public Col(int xCoordInBoard, int size) : base(size)
         {
+            XPos = xCoordInBoard;
             Cells = new Cell[Size];
         }
-        
+
         public override void SetCells(Board targetBoard)
         {
             for (int i = 0; i < Size; i++)
@@ -23,3 +24,4 @@ namespace SudokuApp2
         }
     }
 }
+
