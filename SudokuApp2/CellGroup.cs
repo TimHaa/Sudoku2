@@ -1,38 +1,27 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace SudokuApp2
 {
-    class Row
+    abstract class CellGroup
     {
-
-        private int Size;
-        public int YPos { get; set; }
+        protected int Size;
         public Cell[] Cells { get; set; }
 
-        public Row(int yCoordInBoard, int sizeX)
+        public CellGroup(int xCoordInBoard, int size)
         {
-            Size = sizeX;
-            YPos = yCoordInBoard;
-            Cells = new Cell[9];
+            Size = size;
+            Cells = new Cell[Size];
         }
-
-        public void SetCells(Board targetBoard)
-        {
-            for (int i = 0; i < Size; i++)
-            {
-                Cells[i] = targetBoard.Cells[i, YPos];
-            }
-        }
-
+        public abstract void SetCells(Board targetBoard);
 
         public void ComputeClonedCells()
         {
-            for (int x = 0; x < Size; x++)
+            for (int y = 0; y < Size; y++)
             {
-                Cell currentCell = Cells[x];
+                Cell currentCell = Cells[y];
                 List<int> cloneList = new List<int>();
                 int cloneCount = CountCellClones(currentCell, cloneList);
                 if (IsCandidateCountEqualCloneCount(currentCell.Candidates.Count, cloneCount))
@@ -101,7 +90,7 @@ namespace SudokuApp2
         }
 
 
-       
+
         public void ComputeClonedNums()
         {
             string[] possibleCellsPerNum = GetPossibleCellsPerNum();
@@ -168,7 +157,7 @@ namespace SudokuApp2
             }
             return isContained;
         }
-        
+
         public void RemoveCandidateExcept(int numToRemove, string exceptions)
         {
             for (int x = 0; x < Size; x++)
